@@ -1,0 +1,35 @@
+var ready;
+ready = function () {
+  //Empty errors on modal show
+  $('#create_post').click(function(){
+    $('.post_title, .post_content').val("");
+    $("#error_explanation_create").empty();
+  });
+
+  //If errors, loop through messages hash and append result to modal
+  <% if @post.errors.any? %>
+    //Empty errors before each new submit to ensure that they don't stick
+    $("#error_explanation_create").empty();
+    <% str = "" %>
+    <% @post.errors.full_messages.each do |error| %>
+      <% str+= error + "<br/>" %>
+    <% end %>
+    $("#error_explanation_create").append("<%= raw j str %>");
+  <% else %>
+    //Hide the modal after submit
+    $('#mynewpost').modal('hide');
+
+    //Empty form field values
+    $('.post_title, .post_content').val("");
+
+    //Add new created item to page asynchronously
+    $("#container_posts").prepend("<%= j render @post %>");
+
+    //Immediately hide new post and fade it in
+    $("#post_<%= @post.id %>").hide().fadeIn(1000);
+  <% end %>
+};
+
+$(document).ready(ready);
+$(document).on('page:load', ready);
+$(document).on('turbolinks:render', ready);

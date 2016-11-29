@@ -1,0 +1,26 @@
+var ready;
+ready = function () {
+  <% if @post.errors.any? %>
+    //If errors, loop through messages hash and append result to modal
+  $("#error_explanation_create").empty();
+    <% str = "" %>
+    <% @post.errors.full_messages.each do |error| %>
+      <% str+= error + "<br/>" %>
+    <% end %>
+    $("#error_explanation_update").append("<%= raw j str %>");
+  <% else %>
+  //Hide the modal after Edit
+  $("#myupdatepost_<%= @post.id %>").modal('hide');
+
+  //Fade out edited post, then remove it.
+  $("#post_<%= @post.id %>").fadeOut(500, function(){
+    $(this).remove();
+    //Render all posts anew
+    $("#container_posts").prepend("<%= j render @post %>");
+  });
+  <% end %>
+};
+
+$(document).ready(ready);
+$(document).on('page:load', ready);
+$(document).on('turbolinks:render', ready);
